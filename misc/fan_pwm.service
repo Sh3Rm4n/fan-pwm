@@ -1,0 +1,20 @@
+# This is all bad practice: https://unix.stackexchange.com/questions/451855/run-user-uid-not-mounted-when-daemon-starts
+# PID File is used for watchdog, so we need this practice?
+[Unit]
+Description=Fan PWM service
+Requires=pigpiod.service
+
+[Service]
+Type=forking
+PIDFile=/tmp/fan-pwmd.pid
+ExecStart=fan-pwm --daemonize --log 'info'
+ExecStartPost=sleep 0.1
+StandardOutput=file:/var/log/fan_pwm.log
+StandardError=inherit
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+# vim: ft=systemd
